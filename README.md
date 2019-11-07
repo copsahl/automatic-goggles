@@ -7,7 +7,7 @@ Automatic googles is a program that allows you to manage multiple remote session
 - I learned how to implement classes in python and that they can make things a lot easier.
 - I learned more about socket programming in Python.
 - [I learned about the different methods of sending reverse shells.](http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet)
-    ...Specifically, I learned how to manage multiple connections without everything breaking.
+- I learned more about programming in python and developed useful skill in regards to building larger programs. 
 
 ## Future Additions
 - Upload/Download files.
