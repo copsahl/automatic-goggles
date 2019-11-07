@@ -108,8 +108,6 @@ class Shell:
     def sendCmd(self):
         '''Send a shell command over a session and recieve output'''
 
-        # TODO: Update function to use select function to poll our socket
-
         print("\nCtrl + C to detach from current shell!")
         while True:
             recvLen = 1
