@@ -16,7 +16,7 @@ Automatic googles is a program that allows you to manage multiple remote session
 - Some automation with Post-Exploitation.
 
 ## Current issues
-- When you are in a shell running commands, you have to hit enter twice for the command to actually run and recive output. 
+- When you are in a shell running commands, you have to hit enter twice for the command to actually run and receive output. 
 - Many other error handling things I need to go in and do. 
 
 ## Demonstration
