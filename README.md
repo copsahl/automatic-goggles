@@ -2,6 +2,8 @@
 
 Automatic googles is a program that allows you to manage multiple remote sessions on other machines. It allows you to switch between sessions and run commands on target machines.
 
+### Written in Python 3.6.8
+
 ## Things I learned
 
 - I learned how to implement classes in python and that they can make things a lot easier.
