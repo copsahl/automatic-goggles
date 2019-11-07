@@ -45,3 +45,5 @@ Running local commands inside of automatic-goggles...
 
 ![local](pics/local_command_run.png "Running 'ls' locally")
 
+***
+While there is practical use for this project, I will probably just stick with metasploit :) This was for learning experiences and I will continue to work on it and add things when I get ideas and find time!
