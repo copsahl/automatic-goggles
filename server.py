@@ -120,8 +120,6 @@ class Shell:
                     recvLen = len(data)
                     response += data.decode()
 
-                    print("[DEBUG]: RECV LEN -> {}".format(recvLen))
-
                     if recvLen < 4096:
                         break
 
