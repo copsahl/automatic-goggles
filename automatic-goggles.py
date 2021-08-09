@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-import shutil
+# TODO: USE CMD module to make user input more fun!
+
+import cmd
 from c_color import *
-from os import system as s
 from c_manager import *
+from os import system as s
+import shutil
 from sys import platform
+import threading
 
 # TODO: Have configuration file that allows for nodes to be preconfigured. 
 def main():
 
     columns = shutil.get_terminal_size().columns
-    printc("automatic goggles", columns)
-    printc("chase opsahl", columns)
+    printc(f"{Color.PURPLE}automatic goggles{Color.END}", columns)
+    printc(f"{Color.BLUE}chase opsahl{Color.END}", columns)
     print()
-
     menu()
+
 
 def printc(string, size):
     print(string.center(size))
@@ -21,17 +25,24 @@ def printc(string, size):
 def menu():
     m = Manager()
     while True:
-        cmd = input(f"[{Color.YELLOW}~{Color.END}] ")
+        try:
+            cmd = input(f"[{Color.YELLOW}~{Color.END}] ")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            return
 
         spl_cmd = cmd.split(' ')
         if spl_cmd[0] == 'connect':
             if spl_cmd[4] == "TCP_CONN":
                 m.create_node(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), conn_type=ConnType.TCP_CONN)
             elif spl_cmd[4] == "REV_SHELL":
-                m.create_node(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), conn_type=ConnType.REV_SHELL)
+                t = threading.Thread(target=m.create_node, args=(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), ConnType.REV_SHELL), daemon=True)
+                t.start()
+                #m.create_node(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), conn_type=ConnType.REV_SHELL)
         elif spl_cmd[0] == 'status':
-            node = m.get_node(spl_cmd[1])
-            m.node_status(node)
+            if len(spl_cmd) == 2:
+                node = m.get_node(spl_cmd[1])
+                m.node_status(node)
         elif spl_cmd[0] == 'list':
             m.list_nodes()
         elif spl_cmd[0] == 'info':
@@ -56,17 +67,6 @@ def menu():
 
 
 def aghelp():
-    """Display possible commands to user
-        connect "name" '127.0.0.1' 1234 ConnType.REV_SHELL
-        connect "name" '65.123.3.1' 1337 ConnType.TCP_CONN
-
-        list - list nodes
-
-        status <node>   print node status
-        info <node>     display info on a node
-        shell <node> 
-        help
-    """
     print('''
     connect <name> <ip> <port> <connection_type> - Create a node for specific connectoin type.
         * Connection Types:

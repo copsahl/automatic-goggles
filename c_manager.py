@@ -1,6 +1,6 @@
-from pprint import pprint
 from c_node import *
 from c_color import *
+from pprint import pprint
 
 class Manager:
 
@@ -13,11 +13,11 @@ class Manager:
             print(f"Ope: '{name}' already taken.")
             return None
         new_node = Node(conn[0], conn[1], name=name, conn_type=conn_type)
-        print("Node created successfully!")
+        self.node_dict[new_node.name] = new_node
         if new_node.start() == -1:
             print("Failed to start node!")
+            del self.node_dict[new_node.name]
             return None
-        print("Node started successfully!")
         self.node_dict[new_node.name] = new_node
         return new_node
 
@@ -33,7 +33,11 @@ class Manager:
             return
         print(f"Dropping into shell on '{node.name}'.")
         while True:
-            command = input("[\033[91m~\033[0m] ")
+            try:
+                command = input("[\033[91m~\033[0m] ")
+            except KeyboardInterrupt:
+                print("\nExiting shell...")
+                return
             if command in ['quit', 'exit']:
                 return
             node.run_cmd(command.strip())
@@ -50,8 +54,14 @@ class Manager:
         print("Session exported to file!")
 
     def list_nodes(self):
-        for k, v in self.node_dict.items():
-            print(f"Node: '{k}' on {v.addr}:{v.port}")
+        if len(self.node_dict) > 0:
+            for k, v in self.node_dict.items():
+                if v.status == Status.CONNECTED:
+                    print(f"{Color.GREEN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                elif v.status == Status.DEAD:
+                    print(f"{Color.RED}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                elif v.status == Status.LISTENING:
+                    print(f"{Color.CYAN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
 
     def node_info(self, node):
         try:

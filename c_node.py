@@ -1,10 +1,11 @@
 # Node class (Compromised Host)
 # TODO: REV_SHELL type connections block until they recieve a connection
 
-import socket
-from enum import Enum
 from c_color import *
+from enum import Enum
 from io import BlockingIOError
+import socket
+
 
 class ConnType(Enum):
     REV_SHELL = 1   # Listen
