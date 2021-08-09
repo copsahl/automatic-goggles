@@ -74,3 +74,10 @@ class Manager:
             print(f"{Color.CYAN}STATUS: node '{node.name}' is LISTENING.{Color.END}")
         elif node.status == Status.CONNECTED:
             print(f"{Color.GREEN}STATUS: node '{node.name}' is CONNECTED.{Color.END}")
+    
+    def close(self, node):
+        node.close()
+
+    def close_all(self):
+        for k, v in self.node_dict.items():
+            v.close()

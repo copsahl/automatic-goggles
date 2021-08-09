@@ -3,6 +3,7 @@
 
 import socket
 from enum import Enum
+from c_color import *
 from io import BlockingIOError
 
 class ConnType(Enum):
@@ -91,5 +92,5 @@ class Node:
     
     def close(self):
         self.sock.close()
-        print(f"ATTENTION: Node '{self.name}' has been closed!")
+        print(f"{Color.YELLOW}ATTENTION: Node '{self.name}' has been closed!{Color.END}")
         self.status = Status.DEAD
