@@ -6,7 +6,7 @@ class Manager:
 
     def __init__(self):
         self.node_dict = {}
-        self.history = {}
+        self.cmd_history = {}
 
     def create_node(self, name, conn, conn_type=ConnType.TCP_CONN):
         if name in self.node_dict:
@@ -43,14 +43,14 @@ class Manager:
             node.run_cmd(command.strip())
             print(node.last_ran, end="")
             if hist:
-                self.history[command.strip()] = node.last_ran
+                self.cmd_history[command.strip()] = node.last_ran
     
-    def get_history(self):
-        pprint(self.history)
+    def get_cmd_history(self):
+        pprint(self.cmd_history)
 
-    def export_history(self, filename):
+    def export_cmd_history(self, filename):
         with open(filename, "wt") as fObj:
-            pprint(self.history, stream=fObj)
+            pprint(self.cmd_history, stream=fObj)
         print("Session exported to file!")
 
     def list_nodes(self):

@@ -55,7 +55,7 @@ def menu():
             node = m.get_node(spl_cmd[1])
             m.close(node)
         elif spl_cmd[0] == "export":
-            m.export_history("session_info.txt")
+            m.export_cmd_history("session_info.txt")
         elif spl_cmd[0] == "help":
             aghelp()
         elif spl_cmd[0] == 'clear':
