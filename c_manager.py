@@ -62,6 +62,8 @@ class Manager:
                     print(f"{Color.RED}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
                 elif v.status == Status.LISTENING:
                     print(f"{Color.CYAN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+        else:
+            print("No nodes available!")
 
     def node_info(self, node):
         try:
@@ -91,3 +93,10 @@ class Manager:
     def close_all(self):
         for k, v in self.node_dict.items():
             v.close()
+
+    def remove_node(self, node):
+        try:
+            del self.node_dict[node.name]
+            print("Node successfully removed!")
+        except:
+            print("Ope: Failed to delete node from list")

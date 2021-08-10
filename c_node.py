@@ -1,5 +1,4 @@
 # Node class (Compromised Host)
-# TODO: REV_SHELL type connections block until they recieve a connection
 
 from c_color import *
 from enum import Enum
@@ -83,6 +82,9 @@ class Node:
         except OSError as e:
             return data
         
+        if '\n' in data:
+            data.replace('\n', '\0')
+
         return data
 
     def _send_msg(self, msg):

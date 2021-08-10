@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+# TODO: Make arg parsing easier and require less to type? Just make it better bruh
 # TODO: USE CMD module to make user input more fun!
+# TODO: Have configuration file that allows for nodes to be preconfigured.
 
 import cmd
 from c_color import *
@@ -9,7 +11,6 @@ import shutil
 from sys import platform
 import threading
 
-# TODO: Have configuration file that allows for nodes to be preconfigured. 
 def main():
 
     columns = shutil.get_terminal_size().columns
@@ -56,6 +57,8 @@ def menu():
             m.close(node)
         elif spl_cmd[0] == "export":
             m.export_cmd_history("session_info.txt")
+        elif spl_cmd[0] in ['rm', "del"]:
+            m.remove_node(m.get_node(spl_cmd[1]))
         elif spl_cmd[0] == "help":
             aghelp()
         elif spl_cmd[0] == 'clear':
@@ -82,6 +85,7 @@ def aghelp():
     help            - Display this help information.
     close <node>    - Close a connection on a given node.
     export          - Export a text file containing every command run, with its output.
+    rm, del <node>  - Delete/Remove node from list. 
     quit, exit      - Close automatic goggles and kill connections.
     ''')
 
