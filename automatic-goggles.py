@@ -1,83 +1,110 @@
 #!/usr/bin/env python3
+# TODO: Make arg parsing easier and require less to type? Just make it better bruh
+# TODO: USE CMD module to make user input more fun!
+# TODO: Have configuration file that allows for nodes to be preconfigured.
 
-from sys import exit
-from os import system
+import cmd
+from src.c_color import *
+from src.c_manager import *
+from os import system as s
+import shutil
 from sys import platform
-from server import C2Server, Shell
-from threading import Thread
-
+import threading
 
 def main():
 
-    # Create server object & display banner
-    cc = C2Server('127.0.0.1', 1337)
-    cc.banner()
+    columns = shutil.get_terminal_size().columns
+    printc(f"{Color.PURPLE}automatic goggles{Color.END}", columns)
+    printc(f"{Color.BLUE}chase opsahl{Color.END}", columns)
+    print()
+    menu()
 
-    # Main program loop
+
+def printc(string, size):
+    print(string.center(size))
+
+def menu():
+    m = Manager()
     while True:
-        
-        # Wait for user to enter a command
-        cmd = terminal(cc)
+        try:
+            cmd = input(f"[{Color.YELLOW}~{Color.END}] ")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            return
 
-        # If-else block to determine commands and run accordingly
-        if cmd[0:3] == "sh ": 
-            shellCommand(cmd) # Run local shell command
-        elif cmd[0:7] == "attach ":
-            currShell = cc.getShell(int(cmd[7:])) # Grab the shell object associated with a specific ID
-            currShell.sendCmd() # Use the current shell object to run commands until you quit
-        elif cmd[0:5] == "kill ":
-            sessID = int(cmd[5:])   # Grab session ID from command
+        spl_cmd = cmd.split(' ')
+        if spl_cmd[0] == 'connect':
+            if spl_cmd[3] == "TCP_CONN":
+                m.create_node((spl_cmd[1], int(spl_cmd[2])), conn_type=ConnType.TCP_CONN)
+            elif spl_cmd[3] == "REV_SHELL":
+                t = threading.Thread(target=m.create_node, args=((spl_cmd[1], int(spl_cmd[2])), ConnType.REV_SHELL), daemon=True)
+                t.start()
+        elif spl_cmd[0] == 'status':
+            if len(spl_cmd) == 2:
+                node = m.get_node(spl_cmd[1])
+                m.node_status(node)
+        elif spl_cmd[0] == 'list':
+            m.list_nodes()
+        elif spl_cmd[0] == 'info':
+            node = m.get_node(spl_cmd[1])
+            m.node_info(node)
+        elif spl_cmd[0] == 'shell':
+            node = m.get_node(spl_cmd[1])
+            m.shell(node, hist=True)
+        elif spl_cmd[0] == "close":
             try:
-                cc.killConnection(sessID)   # Try to kill the session
-            except AttributeError:
-                print("Session hasn't started, cannot kill!")   # If you can't kill, give warning
-        elif cmd[0:7] == "listen ":
-            newShell = Shell(cmd[7:])   # Create a new shell object
-
-            # Create a listening Thread set as a daemon so we can kill it easier
-            listenThread = Thread(target = newShell.listenForConnection)
-            listenThread.daemon = True
-            listenThread.start()    # Start listening
-            cc.addConnection(newShell)  # Add our new connection to the list
-        elif cmd in ['sessions', 's']:
-            cc.listSessions()   # List all of our current sessions
-        elif cmd in ['clear', 'c']:
+                if spl_cmd[1] == '*':
+                    m.close_all()
+                else:
+                    node = m.get_node(spl_cmd[1])
+                    m.close(node)
+            except IndexError:
+                print(f"Ope: Syntax error!")
+        elif spl_cmd[0] == "export":
+            m.export_cmd_history("session_info.txt")
+        elif spl_cmd[0] in ['rm']:
+            try:
+                if spl_cmd[1] == "*":
+                    m.remove_all()
+                else:
+                    m.remove_node(m.get_node(spl_cmd[1]))
+            except IndexError:
+                print("Ope: Syntax error!")
+        elif spl_cmd[0] == "help":
+            aghelp()
+        elif spl_cmd[0] == 'clear':
             clear()
-        elif cmd in ['help', 'h']:
-            cc.cmdHelp()    
-        elif cmd in ['quit', 'q', 'exit', 'e']:
-            print("\nQuitting...")
-            exit(0)
+        elif spl_cmd[0] in ['quit', 'exit']:
+            break
         else:
-            print("Unrecognized command!") 
+            print("Invalid command!")
 
+
+def aghelp():
+    print('''
+    connect <name> <ip> <port> <connection_type> - Create a node for specific connectoin type.
+        * Connection Types:
+            TCP_CONN  -> Directly connect to remote shell.
+            REV_SHELL -> Set up listener to recieve reverse shell connection.
+            (i.e.) connect node_name 192.168.0.3 1337 TCP_CONN
+                   connect node_name 0.0.0.0 1234 REV_SHELL
+    
+    list            - List All Nodes
+    status <node>   - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
+    info <node>     - Get basic information of a given node connection. (Hostname, current user, os version)
+    shell <node>    - Drop into a shell on the given node and run commands manually.
+    help            - Display this help information.
+    close <node>, * - Close a connection on a given node.
+    export          - Export a text file containing every command run, with its output.
+    rm <node>,*     - Delete/Remove node from list. 
+    quit, exit      - Close automatic goggles and kill connections.
+    ''')
 
 def clear():
-    # Clear the screen
-
-    if("win" in platform):
-        system('cls')
+    if "win" in platform:
+        s("cls")
     else:
-        system('clear')
-
-
-def terminal(server):
-    # Used to get user supplied commands
-
-    try:
-        cmd = input("[<\033[93m*\033[00m>] ".format(server.publicIP))
-        return cmd
-    except KeyboardInterrupt:
-        return 'q'
-
-
-def shellCommand(cmd):
-    # Used to run local shell commands
-
-    shCmd = cmd[3:]
-    system(shCmd)
-
+        s("clear")
 
 if __name__ == '__main__':
-    clear()
     main()

