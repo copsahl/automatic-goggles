@@ -3,6 +3,7 @@
 from c_color import *
 from enum import Enum
 from io import BlockingIOError
+import random
 import socket
 
 
@@ -18,12 +19,12 @@ class Status(Enum):
 
 class Node:
 
-    def __init__(self, addr: str, port: int, name="Node", conn_type=ConnType.TCP_CONN):
+    def __init__(self, addr: str, port: int, conn_type=ConnType.TCP_CONN):
 
         self.addr = addr
         self.port = port
         self.conn_type = conn_type
-        self.name = name
+        self.name = str(random.randrange(1000, 9999))
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.l_sock = None
         self.last_ran = ''

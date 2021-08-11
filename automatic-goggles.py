@@ -34,12 +34,11 @@ def menu():
 
         spl_cmd = cmd.split(' ')
         if spl_cmd[0] == 'connect':
-            if spl_cmd[4] == "TCP_CONN":
-                m.create_node(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), conn_type=ConnType.TCP_CONN)
-            elif spl_cmd[4] == "REV_SHELL":
-                t = threading.Thread(target=m.create_node, args=(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), ConnType.REV_SHELL), daemon=True)
+            if spl_cmd[3] == "TCP_CONN":
+                m.create_node((spl_cmd[1], int(spl_cmd[2])), conn_type=ConnType.TCP_CONN)
+            elif spl_cmd[3] == "REV_SHELL":
+                t = threading.Thread(target=m.create_node, args=((spl_cmd[1], int(spl_cmd[2])), ConnType.REV_SHELL), daemon=True)
                 t.start()
-                #m.create_node(spl_cmd[1], (spl_cmd[2], int(spl_cmd[3])), conn_type=ConnType.REV_SHELL)
         elif spl_cmd[0] == 'status':
             if len(spl_cmd) == 2:
                 node = m.get_node(spl_cmd[1])
@@ -53,12 +52,24 @@ def menu():
             node = m.get_node(spl_cmd[1])
             m.shell(node, hist=True)
         elif spl_cmd[0] == "close":
-            node = m.get_node(spl_cmd[1])
-            m.close(node)
+            try:
+                if spl_cmd[1] == '*':
+                    m.close_all()
+                else:
+                    node = m.get_node(spl_cmd[1])
+                    m.close(node)
+            except IndexError:
+                print(f"Ope: Syntax error!")
         elif spl_cmd[0] == "export":
             m.export_cmd_history("session_info.txt")
-        elif spl_cmd[0] in ['rm', "del"]:
-            m.remove_node(m.get_node(spl_cmd[1]))
+        elif spl_cmd[0] in ['rm']:
+            try:
+                if spl_cmd[1] == "*":
+                    m.remove_all()
+                else:
+                    m.remove_node(m.get_node(spl_cmd[1]))
+            except IndexError:
+                print("Ope: Syntax error!")
         elif spl_cmd[0] == "help":
             aghelp()
         elif spl_cmd[0] == 'clear':
@@ -83,9 +94,9 @@ def aghelp():
     info <node>     - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>    - Drop into a shell on the given node and run commands manually.
     help            - Display this help information.
-    close <node>    - Close a connection on a given node.
+    close <node>, * - Close a connection on a given node.
     export          - Export a text file containing every command run, with its output.
-    rm, del <node>  - Delete/Remove node from list. 
+    rm <node>,*     - Delete/Remove node from list. 
     quit, exit      - Close automatic goggles and kill connections.
     ''')
 

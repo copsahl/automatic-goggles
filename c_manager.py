@@ -8,11 +8,10 @@ class Manager:
         self.node_dict = {}
         self.cmd_history = {}
 
-    def create_node(self, name, conn, conn_type=ConnType.TCP_CONN):
-        if name in self.node_dict:
-            print(f"Ope: '{name}' already taken.")
-            return None
-        new_node = Node(conn[0], conn[1], name=name, conn_type=conn_type)
+    def create_node(self, conn, conn_type=ConnType.TCP_CONN):
+        new_node = Node(conn[0], conn[1], conn_type=conn_type)
+        if new_node.name in self.node_dict:
+            new_node.name = str(int(new_node.name) + 1)
         self.node_dict[new_node.name] = new_node
         if new_node.start() == -1:
             print("Failed to start node!")
@@ -100,3 +99,6 @@ class Manager:
             print("Node successfully removed!")
         except:
             print("Ope: Failed to delete node from list")
+
+    def remove_all(self):
+        self.node_dict.clear()
