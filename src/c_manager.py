@@ -1,7 +1,6 @@
 # TODO: Add file upload
-
-from c_node import *
-from c_color import *
+from src.c_node import *
+from src.c_color import *
 from pprint import pprint
 
 class Manager:

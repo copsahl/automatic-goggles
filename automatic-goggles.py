@@ -4,8 +4,8 @@
 # TODO: Have configuration file that allows for nodes to be preconfigured.
 
 import cmd
-from c_color import *
-from c_manager import *
+from src.c_color import *
+from src.c_manager import *
 from os import system as s
 import shutil
 from sys import platform

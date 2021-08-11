@@ -1,7 +1,7 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
 
-from c_color import *
+from src.c_color import *
 from enum import Enum
 from io import BlockingIOError
 import random
