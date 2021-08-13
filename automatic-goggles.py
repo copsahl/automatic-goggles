@@ -9,7 +9,6 @@ from src.c_manager import *
 from os import system as s
 import shutil
 from sys import platform
-import threading
 
 def main():
 
@@ -19,11 +18,12 @@ def main():
     print()
     
     m = Manager()
-    while True:
+    on = True
+    while on:
         try:
             m.cmdloop()
         except KeyboardInterrupt:
-            break
+            on = False
 
 def printc(string, size):
     print(string.center(size))
