@@ -85,6 +85,9 @@ class Manager(Cmd):
             print("No nodes available!")
 
     def do_shell(self, arg):
+        if not arg:
+            print("Ope: Invalid Syntax!")
+            return -1
         node = self.get_node(arg)
         if not isinstance(node, CNode) and not isinstance(node, LNode):
             print("Ope: Invalid node, cannot switch to shell...")
@@ -105,11 +108,18 @@ class Manager(Cmd):
     def do_export(self, filename):
         if not filename:
             filename  = "exported_data.txt"
-        with open(filename, "wt") as fObj:
-            pprint(self.cmd_history, stream=fObj)
-        print("Session exported to file!")
+        
+        if len(self.node_dict) > 0:
+            with open(filename, "wt") as fObj:
+                pprint(self.cmd_history, stream=fObj)
+            print("Session exported to file!")
+        else:
+            print("No data to export!")
 
     def do_info(self, arg):
+        if not arg:
+            print("Ope: Invalid Syntax")
+            return -1
         node = self.get_node(arg)
         try:
             node.collect()
@@ -126,6 +136,9 @@ class Manager(Cmd):
         return 0
 
     def do_status(self, name):
+        if not name:
+            print("Ope: Invalid Syntax!")
+            return -1
         node = self.get_node(name)
         if not isinstance(node, CNode) and not isinstance(node, LNode):
             print("Ope: Invalid node!")
@@ -140,6 +153,9 @@ class Manager(Cmd):
         return 0
 
     def do_close(self, name):
+        if not name:
+            print("Ope: Invalid Syntax!")
+            return -1
         node = self.get_node(name)
         if not isinstance(node, CNode) and not isinstance(node, LNode):
             print("Ope: Invalid node!")
@@ -147,6 +163,9 @@ class Manager(Cmd):
         node.close()
 
     def do_remove(self, name):
+        if not name:
+            print("Ope: Invalid Syntax!")
+            return -1
         node = self.get_node(name)
         if not isinstance(node, CNode) and not isinstance(node, LNode):
             print("Ope: Invalid node!")
