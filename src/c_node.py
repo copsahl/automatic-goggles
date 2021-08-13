@@ -1,8 +1,7 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
-# TODO: Depricate ConnType? Separate them into listen and connect methods \_(oo)_/
 # TODO: Add proper error handling within methods. (Potentially raise errors?)
-# TODO: Break down .start() method.
+# TODO: Add multi-platform collect method?
 
 from src.c_color import *
 from enum import Enum
@@ -66,11 +65,12 @@ class BaseNode:
             self.sock.send(f"{msg}\n".encode())
         except BrokenPipeError as e:
             print(f"Ope: {e}. Message: '{msg}' not sent!")
-    
+
     def close(self):
-        self.sock.close()
-        print(f"{Color.YELLOW}ATTENTION: Node '{self.name}' has been closed!{Color.END}")
-        self.status = Status.DEAD
+        if self.sock:
+            self.sock.close()
+            print(f"{Color.YELLOW}ATTENTION: Node '{self.name}' has been closed!{Color.END}")
+            self.status = Status.DEAD
 
 '''Connect Node'''
 class CNode(BaseNode):
@@ -82,8 +82,7 @@ class CNode(BaseNode):
         try:
             self.sock.connect((str(self.addr), int(self.port)))
         except (ConnectionRefusedError, BlockingIOError) as e:
-            print(f"Ope: {e}. Unable to connect to {self.addr}:{self.port}!")
-            return
+            return -1
 
         self.status = Status.CONNECTED
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -92,8 +91,8 @@ class CNode(BaseNode):
 '''Listen Node (Reverse shell)'''   
 class LNode(BaseNode):
     
-    def __init__(self, addr: str, port: int):
-        BaseNode.__init__(self, addr, port)
+    def __init__(self, port: int):
+        BaseNode.__init__(self, "0.0.0.0", port)
     
     def start(self):
 
@@ -105,7 +104,6 @@ class LNode(BaseNode):
             self.sock, self.addr = self.l_sock.accept()
             self.l_sock.close()
         except:
-            print(f"Ope: Failed to set up reverse shell connection!")
             return -1
 
         self.status = Status.CONNECTED
