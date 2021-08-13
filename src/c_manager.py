@@ -109,7 +109,7 @@ class Manager(Cmd):
     def do_export(self, filename):
         if not filename:
             d = datetime.now()
-            filename  = f"{d.strftime("%B-%d-%Y-%H_%M")}.dat"
+            filename  = f"{d.strftime('%B-%d-%Y-%H_%M')}.dat"
         if len(self.node_dict) > 0:
             with open(filename, "wt") as fObj:
                 pprint(self.cmd_history, stream=fObj)
