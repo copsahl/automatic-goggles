@@ -1,6 +1,7 @@
 # TODO: Add file upload
 # TODO: Listener blocks, fix that. 
 from cmd import Cmd
+from datetime import datetime
 import random
 from src.c_node import *
 from src.c_color import *
@@ -107,8 +108,8 @@ class Manager(Cmd):
 
     def do_export(self, filename):
         if not filename:
-            filename  = "exported_data.txt"
-        
+            d = datetime.now()
+            filename  = f"{d.strftime("%B-%d-%Y-%H_%M")}.dat"
         if len(self.node_dict) > 0:
             with open(filename, "wt") as fObj:
                 pprint(self.cmd_history, stream=fObj)
