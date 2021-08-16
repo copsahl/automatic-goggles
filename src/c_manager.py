@@ -5,7 +5,7 @@ from datetime import datetime
 import random
 from src.c_node import *
 from src.c_color import *
-import threading
+from multiprocessing import Process
 from os import system
 from pprint import pprint
 from sys import platform
@@ -19,6 +19,7 @@ class Manager(Cmd):
         Cmd.__init__(self)
         self.node_dict = {}
         self.cmd_history = {}
+        self.threads = []
 
     def do_help(self, intro=None):
         print('''
@@ -56,7 +57,7 @@ class Manager(Cmd):
         self.node_dict[tmp_node.name] = tmp_node
         return 0
 
-    def do_listen(self, args):
+    def _listen(self, args):
         port = args
         try:
             tmp_node = LNode(int(port))
@@ -72,6 +73,12 @@ class Manager(Cmd):
             return -1
         self.node_dict[tmp_node.name] = tmp_node
         return 0
+
+    def do_listen(self, arg):
+        t = Process(target=self._listen, args=(arg,))
+        self.threads.append(t)
+        t.start()
+        return
 
     def do_list(self, args):
         if len(self.node_dict) > 0:
@@ -180,6 +187,9 @@ class Manager(Cmd):
     def do_exit(self, args):
         for k, v in self.node_dict.items():
             self.do_close(k)
+
+        for t in self.threads:
+            t.kill()
         print("Exiting...")
         exit(0)
 
