@@ -6,7 +6,7 @@ import random
 from src.c_node import *
 from src.c_color import *
 from multiprocessing import Process
-from os import system
+from os import system, listdir, path
 from pprint import pprint
 from sys import platform
 
@@ -198,6 +198,62 @@ class Manager(Cmd):
             system("cls")
         else:
             system("clear")
+
+    def do_scripts(self, arg):
+        if not arg:
+            try:
+                print("--Windows Scripts--")
+                for script in listdir(path.join("automation", "windows")):
+                    print(f"\t{script}")
+                print("--Linux Scripts--")
+                for script in listdir(path.join("automation", "linux")):
+                    print(f"\t{script}")
+            except:
+                print("Ope: Failed to find files. Are they in 'automation/(windows|linux)'")
+
+    def do_assign(self, args):
+        """Script syntax should be 'linux/<script>' so we know which os"""
+        if not args:
+            print("Ope: Invalid Syntax!")
+            return
+        try:
+            node_name, script = args.split()
+            node = self.get_node(node_name)
+        except:
+            print("Ope: Invalid Syntax")
+        
+        node.script = f"automation/{script}"
+        print(f"Script '{script}' assigned to node '{node.name}'")
+
+    def do_autostart(self, args):
+        data = {}
+        """Start automation mission"""
+        if not args:
+            print("Ope: Invalid Syntax! Expected 'node'.")
+            return
+        
+        node = self.get_node(args)
+        if not isinstance(node, (CNode, LNode)):
+            print("Ope: Not a valid node!")
+            return
+        
+        if node.script == None:
+            print("Ope: Node doesn't have an assigned script!")
+            return
+
+        with open(node.script) as s:
+            lines = s.readlines()
+        node.sock.settimeout(1)
+        for line in lines:
+            node.run_cmd(line.strip())
+            data[line] = node.last_ran
+        node.sock.settimeout(0.2)
+
+        d = datetime.now()
+        filename  = f"NODE{node.name}_MISSION{d.strftime('%B-%d-%Y-%H_%M')}.dat"
+        with open(filename, "wt") as fObj:
+            pprint(data, stream=fObj)
+        print("Mission Finished and exported!")
 
     def get_node(self, name):
         try:

@@ -26,6 +26,7 @@ class BaseNode:
         self.l_sock = None
         self.last_ran = ''
         self.status = Status.DEAD
+        self.script = None
 
         "Fields to be enumerated"
         self.hostname = None
