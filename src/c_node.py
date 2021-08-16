@@ -1,6 +1,5 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
-# TODO: Add proper error handling within methods. (Potentially raise errors?)
 # TODO: Add multi-platform collect method?
 
 from src.c_color import *
@@ -13,6 +12,7 @@ class Status(Enum):
     DEAD = 0
     LISTENING = 1
     CONNECTED = 2
+    IN_MISSION = 3
 
 '''Base Node'''
 class BaseNode:
@@ -26,6 +26,7 @@ class BaseNode:
         self.l_sock = None
         self.last_ran = ''
         self.status = Status.DEAD
+        self.script = None
 
         "Fields to be enumerated"
         self.hostname = None

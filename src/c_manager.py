@@ -1,12 +1,13 @@
 # TODO: Add file upload
-# TODO: Listener blocks, fix that. 
+# TODO: Make autostart a background process 
+
 from cmd import Cmd
 from datetime import datetime
 import random
 from src.c_node import *
 from src.c_color import *
 from multiprocessing import Process
-from os import system
+from os import system, listdir, path
 from pprint import pprint
 from sys import platform
 
@@ -25,10 +26,16 @@ class Manager(Cmd):
         print('''
     connect <ip> <port>     - Connect to remote shell at <ip>:<port>
     listen <port>           - Set up listening node for incoming reverse shells
+
     list                    - List All Nodes
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
+
+    scripts                 - List all available scripts in 'automation/windows' and 'automation/linux'
+    assign <node> <script>  - Assign a given script to a given node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
+    autostart <node>        - Start the automation mission for a given node that has a script assigned to it. 
+
     help                    - Display this help information.
     close <node>, *         - Close a connection on a given node.
     export                  - Export a text file containing every command run, with its output.
@@ -58,6 +65,9 @@ class Manager(Cmd):
         return 0
 
     def _listen(self, args):
+        pass
+
+    def do_listen(self, args):
         port = args
         try:
             tmp_node = LNode(int(port))
@@ -73,12 +83,6 @@ class Manager(Cmd):
             return -1
         self.node_dict[tmp_node.name] = tmp_node
         return 0
-
-    def do_listen(self, arg):
-        t = Process(target=self._listen, args=(arg,))
-        self.threads.append(t)
-        t.start()
-        return
 
     def do_list(self, args):
         if len(self.node_dict) > 0:
@@ -198,6 +202,65 @@ class Manager(Cmd):
             system("cls")
         else:
             system("clear")
+
+    def do_scripts(self, arg):
+        if not arg:
+            try:
+                print("--Windows Scripts--")
+                for script in listdir(path.join("automation", "windows")):
+                    print(f"\t{script}")
+                print("--Linux Scripts--")
+                for script in listdir(path.join("automation", "linux")):
+                    print(f"\t{script}")
+            except:
+                print("Ope: Failed to find files. Are they in 'automation/(windows|linux)'")
+
+    def do_assign(self, args):
+        """Script syntax should be 'linux/<script>' so we know which os"""
+        if not args:
+            print("Ope: Invalid Syntax!")
+            return
+        try:
+            node_name, script = args.split()
+            node = self.get_node(node_name)
+        except:
+            print("Ope: Invalid Syntax")
+            return
+        
+        node.script = f"automation/{script}"
+        print(f"Script '{script}' assigned to node '{node.name}'")
+
+    def do_autostart(self, args):
+        data = {}
+        """Start automation mission"""
+        if not args:
+            print("Ope: Invalid Syntax! Expected 'node'.")
+            return
+        
+        node = self.get_node(args)
+        if not isinstance(node, (CNode, LNode)):
+            print("Ope: Not a valid node!")
+            return
+        
+        node.status = Status.IN_MISSION
+        if node.script == None:
+            print("Ope: Node doesn't have an assigned script!")
+            return
+
+        with open(node.script) as s:
+            lines = s.readlines()
+        node.sock.settimeout(1)
+        for line in lines:
+            node.run_cmd(line.strip())
+            data[line] = node.last_ran
+        node.sock.settimeout(0.2)
+        node.script = None  # Remove script
+        d = datetime.now()
+        filename  = f"NODE{node.name}_MISSION{d.strftime('%B-%d-%Y-%H_%M')}.dat"
+        with open(filename, "wt") as fObj:
+            pprint(data, stream=fObj)
+        print("Mission Finished and exported!")
+        node.status = Status.CONNECTED
 
     def get_node(self, name):
         try:
