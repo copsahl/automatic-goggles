@@ -1,5 +1,4 @@
 # TODO: Add file upload
-# TODO: Listener blocks, fix that. 
 from cmd import Cmd
 from datetime import datetime
 import random
@@ -242,6 +241,7 @@ class Manager(Cmd):
             print("Ope: Not a valid node!")
             return
         
+        node.status = Status.IN_MISSION
         if node.script == None:
             print("Ope: Node doesn't have an assigned script!")
             return
@@ -259,6 +259,7 @@ class Manager(Cmd):
         with open(filename, "wt") as fObj:
             pprint(data, stream=fObj)
         print("Mission Finished and exported!")
+        node.status = Status.CONNECTED
 
     def get_node(self, name):
         try:
