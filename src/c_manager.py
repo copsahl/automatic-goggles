@@ -225,6 +225,7 @@ class Manager(Cmd):
             node = self.get_node(node_name)
         except:
             print("Ope: Invalid Syntax")
+            return
         
         node.script = f"automation/{script}"
         print(f"Script '{script}' assigned to node '{node.name}'")
