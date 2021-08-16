@@ -1,4 +1,6 @@
 # TODO: Add file upload
+# TODO: Make autostart a background process 
+
 from cmd import Cmd
 from datetime import datetime
 import random
@@ -24,6 +26,7 @@ class Manager(Cmd):
         print('''
     connect <ip> <port>     - Connect to remote shell at <ip>:<port>
     listen <port>           - Set up listening node for incoming reverse shells
+
     list                    - List All Nodes
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
@@ -62,6 +65,9 @@ class Manager(Cmd):
         return 0
 
     def _listen(self, args):
+        pass
+
+    def do_listen(self, args):
         port = args
         try:
             tmp_node = LNode(int(port))
@@ -77,12 +83,6 @@ class Manager(Cmd):
             return -1
         self.node_dict[tmp_node.name] = tmp_node
         return 0
-
-    def do_listen(self, arg):
-        t = Process(target=self._listen, args=(arg,))
-        self.threads.append(t)
-        t.start()
-        return
 
     def do_list(self, args):
         if len(self.node_dict) > 0:
