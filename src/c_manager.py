@@ -29,6 +29,11 @@ class Manager(Cmd):
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
+
+    scripts                 - List all available scripts in 'automation/windows' and 'automation/linux'
+    assign <node> <script>  - Assign a given script to a given node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
+    autostart <node>        - Start the automation mission for a given node that has a script assigned to it. 
+
     help                    - Display this help information.
     close <node>, *         - Close a connection on a given node.
     export                  - Export a text file containing every command run, with its output.
@@ -248,7 +253,7 @@ class Manager(Cmd):
             node.run_cmd(line.strip())
             data[line] = node.last_ran
         node.sock.settimeout(0.2)
-
+        node.script = None  # Remove script
         d = datetime.now()
         filename  = f"NODE{node.name}_MISSION{d.strftime('%B-%d-%Y-%H_%M')}.dat"
         with open(filename, "wt") as fObj:
