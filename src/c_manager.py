@@ -189,7 +189,7 @@ class Manager(Cmd):
             self.do_close(k)
 
         for t in self.threads:
-            t.kill()
+            t.kill()    # Act very harshly towards our created processes for the mean time 
         print("Exiting...")
         exit(0)
 
