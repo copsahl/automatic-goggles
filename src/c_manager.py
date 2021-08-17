@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 from src.c_node import *
 from src.c_color import *
+import threading
 from multiprocessing import Process
 from os import system, listdir, path
 from pprint import pprint
@@ -65,9 +66,6 @@ class Manager(Cmd):
         return 0
 
     def _listen(self, args):
-        pass
-
-    def do_listen(self, args):
         port = args
         try:
             tmp_node = LNode(int(port))
@@ -84,6 +82,12 @@ class Manager(Cmd):
         self.node_dict[tmp_node.name] = tmp_node
         return 0
 
+    def do_listen(self, args):
+        # NOTE: Setting threads as daemons so they close when the program closes. Not clean but works
+        t = threading.Thread(target=self._listen, args=(args,), daemon=True)
+        self.threads.append(t)
+        t.start()
+
     def do_list(self, args):
         if len(self.node_dict) > 0:
             for k, v in self.node_dict.items():
@@ -93,6 +97,8 @@ class Manager(Cmd):
                     print(f"{Color.RED}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
                 elif v.status == Status.LISTENING:
                     print(f"{Color.CYAN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                elif v.status == Status.IN_MISSION:
+                    print(f"{Color.PURPLE}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
         else:
             print("No nodes available!")
 
@@ -162,6 +168,8 @@ class Manager(Cmd):
             print(f"{Color.CYAN}STATUS: node '{node.name}' is LISTENING.{Color.END}")
         elif node.status == Status.CONNECTED:
             print(f"{Color.GREEN}STATUS: node '{node.name}' is CONNECTED.{Color.END}")
+        elif node.status == Status.IN_MISSION:
+                    print(f"{Color.PURPLE}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
         return 0
 
     def do_close(self, name):
@@ -192,8 +200,6 @@ class Manager(Cmd):
         for k, v in self.node_dict.items():
             self.do_close(k)
 
-        for t in self.threads:
-            t.kill()    # Act very harshly towards our created processes for the mean time 
         print("Exiting...")
         exit(0)
 
@@ -230,7 +236,7 @@ class Manager(Cmd):
         node.script = f"automation/{script}"
         print(f"Script '{script}' assigned to node '{node.name}'")
 
-    def do_autostart(self, args):
+    def _autostart(self, args):
         data = {}
         """Start automation mission"""
         if not args:
@@ -261,6 +267,12 @@ class Manager(Cmd):
             pprint(data, stream=fObj)
         print("Mission Finished and exported!")
         node.status = Status.CONNECTED
+        return
+
+    def do_autostart(self, args):
+        t = threading.Thread(target=self._autostart, args=(args,), daemon=True)
+        self.threads.append(t)
+        t.start()
 
     def get_node(self, name):
         try:
