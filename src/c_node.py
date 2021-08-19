@@ -37,6 +37,7 @@ class BaseNode:
         self._send_msg(cmd)
         self.last_ran = self._get_msg(4096)
 
+    # NOTE: Most likey will become depricated
     def collect(self):
         self.run_cmd("whoami")
         self.user = self.last_ran.strip()
@@ -48,18 +49,13 @@ class BaseNode:
         self.os = self.last_ran.strip()
 
     def _get_msg(self, buff_size):
-        b = 1
+        # NOTE: Make this more cohesive
         data = ''
         try:
-            while b != 0:
+            while True:
                 data += self.sock.recv(buff_size).decode()
-        except OSError as e:
+        except socket.timeout as e:
             return data
-        
-        if '\n' in data:
-            data.replace('\n', '\0')
-
-        return data
 
     def _send_msg(self, msg):
         try:
