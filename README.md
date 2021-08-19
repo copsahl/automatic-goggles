@@ -16,4 +16,7 @@ When attacking some sort of application, it's always a goal to get a shell on a 
 - *What do you think is the best part about automatic goggles right now?*
   - I personally think the best (and also the coolest) part about automatic goggles is running different mission scripts. And the even better part is that they are literally so easy to make! They are very basic right now, but they will allow you to run missions on a few nodes at a time while also manually dropping into a shell on other nodes.
 
+## Demonstration
+*coming soon*
+
 
