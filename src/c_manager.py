@@ -33,7 +33,7 @@ class Manager(Cmd):
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
 
-    scripts                 - List all available scripts in 'automation/windows' and 'automation/linux'
+    scripts                 - List all available scripts in 'missions/windows' and 'missions/linux'
     assign <node> <script>  - Assign a given script to a given node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
     autostart <node>        - Start the automation mission for a given node that has a script assigned to it. 
 
@@ -213,13 +213,13 @@ class Manager(Cmd):
         if not arg:
             try:
                 print("--Windows Scripts--")
-                for script in listdir(path.join("automation", "windows")):
+                for script in listdir(path.join("missions", "windows")):
                     print(f"\t{script}")
                 print("--Linux Scripts--")
-                for script in listdir(path.join("automation", "linux")):
+                for script in listdir(path.join("missions", "linux")):
                     print(f"\t{script}")
             except:
-                print("Ope: Failed to find files. Are they in 'automation/(windows|linux)'")
+                print("Ope: Failed to find files. Are they in 'missions/(windows|linux)'")
 
     def do_assign(self, args):
         """Script syntax should be 'linux/<script>' so we know which os"""
@@ -233,7 +233,7 @@ class Manager(Cmd):
             print("Ope: Invalid Syntax")
             return
         
-        node.script = f"automation/{script}"
+        node.script = f"missions/{script}"
         print(f"Script '{script}' assigned to node '{node.name}'")
 
     def _autostart(self, args):
