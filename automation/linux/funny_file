@@ -1,1 +1,0 @@
-touch /home/$(whoami)/Desktop/hax.txt; echo "You have been hacked." >> /home/$(whoami)/Desktop/hax.txt

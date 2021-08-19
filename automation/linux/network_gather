@@ -1,3 +1,0 @@
-ip a
-netstat -at
-who -uH
