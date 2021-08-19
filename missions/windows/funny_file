@@ -1,0 +1,1 @@
+New-Item C:\Users\$env:UserName\Desktop\hax.txt; Set-Content C:\Users\$env:UserName\Desktop\hax.txt "You have been hacked."
