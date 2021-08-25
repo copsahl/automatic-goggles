@@ -1,5 +1,4 @@
 # TODO: Add file upload
-# TODO: Make autostart a background process 
 
 from cmd import Cmd
 from datetime import datetime
@@ -7,7 +6,6 @@ import random
 from src.c_node import *
 from src.c_color import *
 import threading
-from multiprocessing import Process
 from os import system, listdir, path
 from pprint import pprint
 from sys import platform
