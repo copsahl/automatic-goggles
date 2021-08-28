@@ -1,6 +1,7 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
 # TODO: Add multi-platform collect method?
+# TODO: Add custom naming for nodes
 
 from src.c_color import *
 from enum import Enum
@@ -23,7 +24,6 @@ class BaseNode:
         self.port = port
         self.name = str(random.randrange(1000, 9999))
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.l_sock = None
         self.last_ran = ''
         self.status = Status.DEAD
         self.script = None
@@ -90,6 +90,7 @@ class LNode(BaseNode):
     
     def __init__(self, port: int):
         BaseNode.__init__(self, "0.0.0.0", port)
+        self.l_sock = None
     
     def start(self):
 
