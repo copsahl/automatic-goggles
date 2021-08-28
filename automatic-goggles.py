@@ -2,7 +2,7 @@
 # TODO: Make arg parsing easier and require less to type? Just make it better bruh
 # TODO: USE CMD module to make user input more fun!
 # TODO: Have configuration file that allows for nodes to be preconfigured.
-
+# NOTE: TESTING 
 import cmd
 from src.c_color import *
 from src.c_manager import *
