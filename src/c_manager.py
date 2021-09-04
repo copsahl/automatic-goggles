@@ -1,4 +1,5 @@
 # TODO: Add file upload
+# TODO: Seperate Manager from actual CMD functionality? 
 # NOTE: Idea for goggle bots you can deploy on machines. These can aid in operations with file upload and download. 
 #       Can create using python, bash, powershell, etc...
 import base64
@@ -301,15 +302,9 @@ class Manager(Cmd):
         print("File upload successfull!")
 
     def do_host(self, args):
-        if args:
-            chdir(args)
-        else:
-            chdir("uploads")
-
         t = threading.Thread(target=Uploader.web_host_upload, daemon=True)
         t.start()
         self.threads.append(t)
-        chdir("..")
 
     def get_node(self, name):
         try:
