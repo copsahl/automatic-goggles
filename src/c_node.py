@@ -1,8 +1,9 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
 # TODO: Add multi-platform collect method?
+# TODO: Add custom naming for nodes
 
-from src.c_color import *
+from src.c_color import Color
 from enum import Enum
 from io import BlockingIOError
 import random
@@ -23,7 +24,6 @@ class BaseNode:
         self.port = port
         self.name = str(random.randrange(1000, 9999))
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.l_sock = None
         self.last_ran = ''
         self.status = Status.DEAD
         self.script = None
@@ -54,7 +54,7 @@ class BaseNode:
         try:
             while True:
                 data += self.sock.recv(buff_size).decode()
-        except socket.timeout as e:
+        except socket.timeout:
             return data
 
     def _send_msg(self, msg):
@@ -78,19 +78,20 @@ class CNode(BaseNode):
     def start(self):
         try:
             self.sock.connect((str(self.addr), int(self.port)))
-        except (ConnectionRefusedError, BlockingIOError) as e:
+        except (ConnectionRefusedError, BlockingIOError):
             return -1
 
         self.status = Status.CONNECTED
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.settimeout(0.2)
 
-'''Listen Node (Reverse shell)'''   
+'''Listen Node (Reverse shell)'''
 class LNode(BaseNode):
-    
+
     def __init__(self, port: int):
         BaseNode.__init__(self, "0.0.0.0", port)
-    
+        self.l_sock = None
+
     def start(self):
 
         try:
