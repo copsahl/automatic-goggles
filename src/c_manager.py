@@ -202,6 +202,7 @@ class Manager(Cmd):
             print("Ope: Failed to delete node from list")
 
     def do_exit(self, args):
+        # TODO: Don't use .items() use .keys()
         for k, v in self.node_dict.items():
             self.do_close(k)
 

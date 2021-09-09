@@ -44,7 +44,7 @@ class Uploader:
         # TODO: Make better
         # NOTE: Require's 'admin' or 'root' permissions
         try:
-            serv = HTTPServer(("0.0.0.0", PORT), HTTPRequestHandler)
+            serv = HTTPServer(("127.0.0.1", PORT), HTTPRequestHandler)
             serv.serve_forever()
         except PermissionError as e:
             print(f"Ope: {e}: Cannot start HTTP server!")
