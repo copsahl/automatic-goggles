@@ -9,6 +9,7 @@ import random
 from src.c_node import *
 from src.c_color import *
 from src.c_uploader import *
+from src.c_loader import *
 import threading
 from os import system, listdir, path, chdir, getcwd
 from pprint import pprint
@@ -31,6 +32,7 @@ class Manager(Cmd):
     listen <port>           - Set up listening node for incoming reverse shells
 
     list                    - List All Nodes
+    load <file>             - Load a JSON configuration file in the node-configurations directory
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
@@ -300,6 +302,16 @@ class Manager(Cmd):
             return
 
         print("File upload successfull!")
+
+    def do_load(self, args):
+        filename = args.split()
+
+        try:
+            cfg_file = Loader.json_load(filename[0], self.node_dict)
+        except JSONConfigFileNotFound:
+            print("Ope: Couldn't find that JSON file in the node-configurations directory!")
+            return
+
 
     def do_host(self, args):
         t = threading.Thread(target=Uploader.web_host_upload, daemon=True)
