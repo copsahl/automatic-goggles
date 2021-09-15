@@ -1,0 +1,15 @@
+{
+    "nodes": [
+        {
+            "node_id": 1337,
+            "node_type": "cnode",
+            "ip": "127.0.0.1",
+            "port": 1337
+        },
+        {
+            "node_id": 1338,
+            "node_type": "lnode",
+            "port": 4444
+        }
+    ]
+}
