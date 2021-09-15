@@ -33,6 +33,7 @@ class Manager(Cmd):
 
     list                    - List All Nodes
     load <file>             - Load a JSON configuration file in the node-configurations directory
+    save <file>             - Save the current node setup to a JSON configuration file
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
@@ -307,11 +308,18 @@ class Manager(Cmd):
         filename = args.split()
 
         try:
-            cfg_file = Loader.json_load(filename[0], self.node_dict)
+            Loader.json_load(filename[0], self.node_dict)
         except JSONConfigFileNotFound:
             print("Ope: Couldn't find that JSON file in the node-configurations directory!")
             return
 
+    def do_save(self, args):
+        filename = args.split()
+
+        try:
+            Loader.json_save(filename[0], self.node_dict)
+        except JSONConfigSaveError:
+            print("Ope: Failed to save configuration, file related error occurred!")
 
     def do_host(self, args):
         t = threading.Thread(target=Uploader.web_host_upload, daemon=True)
