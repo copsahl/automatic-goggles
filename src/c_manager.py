@@ -308,7 +308,7 @@ class Manager(Cmd):
         filename = args.split()
 
         try:
-            Loader.json_load(filename[0], self.node_dict)
+            Loader.json_load(filename[0], self.node_dict, self.threads)
         except JSONConfigFileNotFound:
             print("Ope: Couldn't find that JSON file in the node-configurations directory!")
             return
