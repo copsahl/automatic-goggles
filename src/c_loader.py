@@ -18,7 +18,7 @@ class Loader:
     """Class to load JSON configuration file for automatic node creation"""
 
     @staticmethod
-    def json_load(local_file, node_dictionary):
+    def json_load(local_file, node_dictionary, thread_list):
         '''
             Loads a JSON node configuration file in the node-configurations directory
             and attempts to connect to each node.
@@ -74,6 +74,12 @@ class Loader:
                     new_node.name = str(node_item["node_id"])
                     node_dictionary[new_node.name] = new_node
 
+                    # We might want to have a function for listening that does error checking,
+                    # and then use that as the target for the thread
+                    t = threading.Thread(target=new_node.start(), args=(args, ), daemon=True)
+                    thread_list.append(t)
+                    t.start()
+
                     if new_node.start() == -1:
                         print(f"{Color.RED}Ope: Unable to listen on {new_node_port}!")
                         del node_dictionary[new_node.name]
@@ -86,6 +92,9 @@ class Loader:
 
     @staticmethod
     def json_save(local_file, node_dictionary):
+        '''
+            Saves the current node configuration to a JSON file in the node_configurations directory.
+        '''
 
         json_export_dict = {
             "nodes": []
