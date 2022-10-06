@@ -40,10 +40,11 @@ class Manager(Cmd):
     tag <node> <name>       - Add custom tags to a node.
 
     upload <node> <local_file> <new_filename>   - Uploads a file from the 'uploads' directory and makes it executable. 
+
     host                    - Host webserver in 'uploads' directory for file downloads. 
 
     scripts                 - List all available scripts in 'missions/windows' and 'missions/linux'
-    assign <node> <script>  - Assign a given script to a given node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
+    assign <node> <script>  - Assign a script to a node. Script should be in the form of 'linux/my_script' or 'windows/my_script'
     autostart <node>        - Start the automation mission for a given node that has a script assigned to it. 
 
     help                    - Display this help information.
