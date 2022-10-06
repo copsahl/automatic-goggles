@@ -37,6 +37,7 @@ class Manager(Cmd):
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
     info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
+    tag <node> <name>       - Add custom tags to a node.
 
     upload <node> <local_file> <new_filename>   - Uploads a file from the 'uploads' directory and makes it executable. 
     host                    - Host webserver in 'uploads' directory for file downloads. 
@@ -100,13 +101,13 @@ class Manager(Cmd):
         if len(self.node_dict) > 0:
             for k, v in self.node_dict.items():
                 if v.status == Status.CONNECTED:
-                    print(f"{Color.GREEN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                    print(f"{Color.GREEN}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.DEAD:
-                    print(f"{Color.RED}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                    print(f"{Color.RED}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.LISTENING:
-                    print(f"{Color.CYAN}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                    print(f"{Color.CYAN}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.IN_MISSION:
-                    print(f"{Color.PURPLE}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
+                    print(f"{Color.PURPLE}Node: '{v.tag}' on {v.addr}:{v.port} {v.status}{Color.END}") 
         else:
             print("No nodes available!")
 
@@ -179,6 +180,17 @@ class Manager(Cmd):
         elif node.status == Status.IN_MISSION:
                     print(f"{Color.PURPLE}Node: '{k}' on {v.addr}:{v.port} {v.status}{Color.END}")
         return 0
+
+    def do_tag(self, args):
+        if not args:
+            print("Ope: Invalid Syntax!")
+            return -1
+        args = args.split(' ')
+        node = self.get_node(args[0])
+        if not isinstance(node, (CNode, LNode)):
+            print("Ope: Invalid node!")
+            return -1
+        node.add_tag(args[1])
 
     def do_close(self, name):
         if not name:

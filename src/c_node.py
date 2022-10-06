@@ -1,7 +1,5 @@
 # Node class (Compromised Host)
 # TODO: RECV will hang if connection gets interrupted while in shell, fix it
-# TODO: Add multi-platform collect method?
-# TODO: Add custom naming for nodes
 
 from src.c_color import Color
 from enum import Enum
@@ -27,6 +25,7 @@ class BaseNode:
         self.last_ran = ''
         self.status = Status.DEAD
         self.script = None
+        self.tags = []
 
         "Fields to be enumerated"
         self.hostname = None
@@ -68,6 +67,15 @@ class BaseNode:
             self.sock.close()
             print(f"{Color.YELLOW}ATTENTION: Node '{self.name}' has been closed!{Color.END}")
             self.status = Status.DEAD
+
+    def add_tag(self, tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
+
+    def del_tag(self, tag):
+        if tag in self.tags:
+            self.tags.remove(tag)
+
 
 '''Connect Node'''
 class CNode(BaseNode):
