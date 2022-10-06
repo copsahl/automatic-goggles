@@ -27,25 +27,9 @@ class BaseNode:
         self.script = None
         self.tags = []
 
-        "Fields to be enumerated"
-        self.hostname = None
-        self.user = None
-        self.os = None
-
     def run_cmd(self, cmd: str):
         self._send_msg(cmd)
         self.last_ran = self._get_msg(4096)
-
-    # NOTE: Most likey will become depricated
-    def collect(self):
-        self.run_cmd("whoami")
-        self.user = self.last_ran.strip()
-
-        self.run_cmd("hostname")
-        self.hostname = self.last_ran.strip()
-
-        self.run_cmd("uname -a")
-        self.os = self.last_ran.strip()
 
     def _get_msg(self, buff_size):
         # NOTE: Make this more cohesive

@@ -35,7 +35,6 @@ class Manager(Cmd):
     load <file>             - Load a JSON configuration file in the node-configurations directory
     save <file>             - Save the current node setup to a JSON configuration file
     status <node>           - Get the status of a specific node (DEAD, LISTENING, CONNECTED)
-    info <node>             - Get basic information of a given node connection. (Hostname, current user, os version)
     shell <node>            - Drop into a shell on the given node and run commands manually.
     tag <node> <name>       - Add custom tags to a node.
 
@@ -143,25 +142,6 @@ class Manager(Cmd):
             print("Session exported to file!")
         else:
             print("No data to export!")
-
-    def do_info(self, arg):
-        if not arg:
-            print("Ope: Invalid Syntax")
-            return -1
-        node = self.get_node(arg)
-        try:
-            node.collect()
-        except:
-            print("Ope: Collection failed!")
-            return -1
-
-        print(f"Name: {node.name}")
-        print(f"Network: {node.addr}:{node.port} -- {type(node)}")
-        print(f"Hostname: {node.hostname}")
-        print(f"Current User: {node.user}")
-        print(f"Operating System: {node.os}")
-        print(f"Status: {node.status}")
-        return 0
 
     def do_status(self, name):
         if not name:
