@@ -65,8 +65,9 @@ class BaseNode:
     def close(self):
         if self.sock:
             self.sock.close()
-            print(f"{Color.YELLOW}ATTENTION: Node '{self.name}' has been closed!{Color.END}")
             self.status = Status.DEAD
+            return 0
+        return -1
 
     def add_tag(self, tag):
         if tag not in self.tags:

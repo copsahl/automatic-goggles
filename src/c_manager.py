@@ -200,7 +200,8 @@ class Manager(Cmd):
         if not isinstance(node, (CNode, LNode)):
             print("Ope: Invalid node!")
             return -1
-        node.close()
+        if node.close() == 0:
+            print(f"{Color.YELLOW}ATTENTION: Node '{node.name}' has been closed!{Color.END}")
 
     def do_remove(self, name):
         if not name:
@@ -218,7 +219,8 @@ class Manager(Cmd):
 
     def do_exit(self, args):
         for key in self.node_dict.keys():
-            self.do_close(key)
+            if self.node_dict[key].status != Status.DEAD:
+                self.do_close(key)
 
         print("Exiting...")
         exit(0)
