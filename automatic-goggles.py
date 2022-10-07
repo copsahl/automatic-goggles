@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# TODO: Have configuration file that allows for nodes to be preconfigured.
-# TODO: Implement google-bot interface
 import cmd
 from src.c_color import *
 from src.c_manager import Manager
