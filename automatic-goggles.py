@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 import cmd
+import shutil
 from src.c_color import *
 from src.c_manager import Manager
-from os import system as s
-import shutil
-from sys import platform
 
 def main():
 
