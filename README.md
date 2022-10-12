@@ -16,6 +16,10 @@ Easily manage remote sessions, run pre-configured missions, all in one place!
 	- Export commands ran during sessions with their output: `export`
 	- And more!
 
+## Need help generating a reverse shell?
+
+Pentestmonkey has your back! Check out the [reverse shell cheat sheet](https://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet)!
+
 ## FAQ
 - *Why would I want to use automatic goggles over other solutions?*
   - I believe that automatic goggles makes handling multiple sessions simple and easy. And it has the unqiue ability to run preconfigured missions with scripts you create yourself (or use the ones I've made even though they aren't super helpful).
