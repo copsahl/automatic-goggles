@@ -44,7 +44,7 @@ class BaseNode:
         try:
             self.sock.send(f"{msg}\n".encode())
         except BrokenPipeError as e:
-            print(f"Ope: {e}. Message: '{msg}' not sent!")
+            print(f"Ope: {e}. Message '{msg}' failed to send.")
 
     def close(self):
         if self.sock:

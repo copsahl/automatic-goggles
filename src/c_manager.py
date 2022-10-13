@@ -81,7 +81,7 @@ class Manager(Cmd):
         except ValueError:
             print("Ope: Invalid Syntax!")
             return -1
-        if tmp_node.name in self.node_dict:
+        while tmp_node.name in self.node_dict:
             tmp_node.name = str(random.randrange(1000, 9999))
         self.node_dict[tmp_node.name] = tmp_node
         if tmp_node.start() == -1:
@@ -101,13 +101,13 @@ class Manager(Cmd):
         if len(self.node_dict) > 0:
             for k, v in self.node_dict.items():
                 if v.status == Status.CONNECTED:
-                    print(f"{Color.GREEN}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
+                    print(f"{Color.GREEN}{v.name} on {v.addr[0]}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.DEAD:
-                    print(f"{Color.RED}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
+                    print(f"{Color.RED}{v.name} on {v.addr[0]}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.LISTENING:
-                    print(f"{Color.CYAN}{v.name} on {v.addr}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
+                    print(f"{Color.CYAN}{v.name} on {v.addr[0]}:{v.port} {v.status}\n\t{v.tags}{Color.END}")
                 elif v.status == Status.IN_MISSION:
-                    print(f"{Color.PURPLE}Node: '{v.tag}' on {v.addr}:{v.port} {v.status}{Color.END}") 
+                    print(f"{Color.PURPLE}Node: '{v.name}' on {v.addr[0]}:{v.port} {v.status}{Color.END}") 
         else:
             print("No nodes available!")
 
